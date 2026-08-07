@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: zyna-ai-1
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        value: smartlead.db
+      - key: AI_PROVIDER
+        value: grok
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROK_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: BUSINESS_CONTEXT
+        sync: false
