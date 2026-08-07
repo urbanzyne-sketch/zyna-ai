@@ -8,7 +8,7 @@
 import { fetch } from 'wix-fetch';
 
 // Render üzerindeki canlı API adresi:
-const BACKEND_URL = "https://zyna-ai-1.onrender.com";
+const BACKEND_URL = "https://zyna-ai.onrender.com";
 
 // Sohbet geçmişi (ZYNE AI'ya bağlam sağlamak için)
 let chatHistory = [];
