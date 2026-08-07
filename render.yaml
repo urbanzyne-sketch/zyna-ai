@@ -22,3 +22,10 @@ services:
         value: "*"
       - key: BUSINESS_CONTEXT
         sync: false
+
+  - type: web
+    name: zyna-ai-web
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: ./web
+    pullRequestPreviewsEnabled: false
