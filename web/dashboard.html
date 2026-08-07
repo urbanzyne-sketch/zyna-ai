@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yönetim Paneli — ZYNE AI</title>
+<meta name="description" content="UrbanZyne yönetim paneli — ZYNE AI üzerinden gelen lead kayıtlarını görüntüleyin.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 40px 0 26px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .page-head h1 {
+    font-size: 24px;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .page-head p {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  .refresh-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-dim);
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .refresh-btn:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+
+  /* --- F-pattern: üst istatistik satırı, göz önce buraya soldan sağa gezer --- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 26px;
+  }
+
+  @media (max-width: 800px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .stat-card {
+    padding: 18px 20px;
+  }
+
+  .stat-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-value.accent { color: var(--accent); }
+
+  /* --- F-pattern: tablo, isim kolonu solda en önemli --- */
+  .table-card {
+    padding: 6px;
+    overflow: hidden;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 920px;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-faint);
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    white-space: nowrap;
+  }
+
+  thead th:first-child { padding-left: 22px; }
+
+  tbody td {
+    padding: 15px 18px;
+    font-size: 13.5px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap;
+  }
+
+  tbody td:first-child {
+    padding-left: 22px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+
+  .cell-dim { color: var(--text-dim); }
+  .cell-faint { color: var(--text-faint); }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(94, 234, 212, 0.25);
+  }
+
+  .empty-state, .loading-state {
+    padding: 70px 20px;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 13.5px;
+  }
+
+  .loading-state .spin {
+    width: 22px; height: 22px;
+    border: 2px solid rgba(255,255,255,0.12);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 14px;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">UZ</div>
+      <div class="brand-name">UrbanZyne
+        <span>ZYNE AI · Yapı Malzemeleri Asistanı</span>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="dashboard.html" class="active">Yönetim Paneli</a>
+    </nav>
+  </header>
+
+  <div class="page-head">
+    <div>
+      <h1>Lead Yönetim Paneli</h1>
+      <p>ZYNE AI üzerinden gelen tüm talepler aşağıda listelenir.</p>
+    </div>
+    <button class="btn refresh-btn" id="btnYenile">↻ Yenile</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card glass">
+      <div class="stat-label">Toplam Talep</div>
+      <div class="stat-value accent" id="statToplam">–</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-label">Bugün Gelen</div>
+      <div class="stat-value" id="statBugun">–</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-label">Bu Hafta</div>
+      <div class="stat-value" id="statHafta">–</div>
+    </div>
+    <div class="stat-card glass">
+      <div class="stat-label">Farklı Şehir</div>
+      <div class="stat-value" id="statSehir">–</div>
+    </div>
+  </div>
+
+  <div class="table-card glass">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>İsim</th>
+            <th>Telefon</th>
+            <th>E-posta</th>
+            <th>Firma</th>
+            <th>Şehir</th>
+            <th>Proje Türü</th>
+            <th>Talep Türü</th>
+            <th>Malzeme</th>
+            <th>Miktar</th>
+            <th>Tarih</th>
+          </tr>
+        </thead>
+        <tbody id="repeaterLeads">
+        </tbody>
+      </table>
+    </div>
+    <div id="stateBox"></div>
+  </div>
+
+  <footer class="footer">© 2026 UrbanZyne — ZYNE AI tarafından desteklenmektedir.</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
