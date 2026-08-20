@@ -80,7 +80,7 @@ class AIService:
                 return self._grok_istek(mesaj, gecmis, api_key)
             return self._groq_istek(mesaj, gecmis, api_key)
         except requests.RequestException:
-            # Ağ/bağlantı hatası durumunda demo yanıtına düş
+            # Ağ/bağlantı hatasıı durumunda demo yanıtına düş
             return self._demo_modu_yaniti(mesaj, network_error=True)
 
     def _groq_istek(self, mesaj, gecmis, api_key):
