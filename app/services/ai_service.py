@@ -85,9 +85,9 @@ class AIService:
 
     def _groq_istek(self, mesaj, gecmis, api_key):
         """Groq (OpenAI uyumlu Chat Completions) API'sine istek atar. Model: llama-3.1-8b-instant"""
-        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        headers = {"Authorization": "Bearer {api_key}", "Content-Type": "application/json"}
         payload = {
-            "model": "llama-3.1-8b-instant",
+            "model": "openai/gpt-oss-120b",
             "messages": self._mesajlari_olustur(mesaj, gecmis),
             "temperature": 0.7,
             "max_tokens": 500
